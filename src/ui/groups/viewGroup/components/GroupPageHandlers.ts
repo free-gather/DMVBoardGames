@@ -4,7 +4,7 @@ import {
   GROUP_NAME_INPUT,
   GROUP_URL_INPUT,
   SAVE_GROUP_REQUEST_STORE,
-} from "../Constants.ts";
+} from "../../Constants.ts";
 import type { UpdateGroupRequest } from "../data/types/UpdateGroupRequest.ts";
 
 export const EDIT_GROUP_EVENT_CONFIG: EventHandlerThunkConfig = {
@@ -41,7 +41,7 @@ export const SAVE_GROUP_CONFIG: EventHandlerThunkConfig = {
         )?.value ?? "",
     };
   },
-  storeToUpdate: SAVE_GROUP_REQUEST_STORE,
+  requestStoreToUpdate: SAVE_GROUP_REQUEST_STORE,
   componentReducer: function (a: any) {
     return {
       name: a.name,

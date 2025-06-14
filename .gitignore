@@ -1,4 +1,4 @@
-.env
+src/html/.env
 .idea
 dist/
 dist_groups/

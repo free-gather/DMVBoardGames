@@ -13,5 +13,5 @@ export const SHOW_INFO_CONFIG: EventHandlerThunkConfig = {
       `${window.location.origin}/groups.html?name=${encodeURIComponent(groupName)}`,
     );
   },
-  storeToUpdate: "",
+  requestStoreToUpdate: "",
 };

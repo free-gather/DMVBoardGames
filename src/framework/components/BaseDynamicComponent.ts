@@ -46,6 +46,7 @@ export abstract class BaseDynamicComponent extends HTMLElement {
   dependenciesLoaded: boolean = true;
   componentLoadConfig: ComponentLoadConfig | undefined = undefined; //Used if global state is needed before loading the component
 
+  thunksWithReducers = [];
   static instanceCount = 1;
 
   constructor(componentStoreName: string, loadConfig?: ComponentLoadConfig) {
@@ -125,7 +126,6 @@ export abstract class BaseDynamicComponent extends HTMLElement {
     const addEventHandler = function (item: Element) {
       const id = item.getAttribute(elementIdTag) ?? "";
       const eventConfig = eventHandlers[id];
-
       item.addEventListener(eventConfig.eventType, eventConfig.eventFunction);
     };
 
@@ -222,8 +222,9 @@ export abstract class BaseDynamicComponent extends HTMLElement {
     shadowRoot?: ShadowRoot,
   ) {
     const storeToUpdate =
-      eventConfig?.storeToUpdate && eventConfig.storeToUpdate.length > 0
-        ? eventConfig.storeToUpdate
+      eventConfig?.requestStoreToUpdate &&
+      eventConfig.requestStoreToUpdate.length > 0
+        ? eventConfig.requestStoreToUpdate
         : storeName;
 
     if (!storeToUpdate) {
@@ -231,6 +232,7 @@ export abstract class BaseDynamicComponent extends HTMLElement {
     }
 
     const dispatchers: BaseDispatcher[] = [];
+
     if (eventConfig.componentReducer && storeName) {
       const componentStoreUpdate = new BaseDispatcher(
         storeName,
@@ -244,7 +246,7 @@ export abstract class BaseDynamicComponent extends HTMLElement {
         !hasRequestStoreSubscribers(storeToUpdate) &&
         !hasComponentStoreSubscribers(storeToUpdate)
       ) {
-        throw new Error(`No subscribers for store ${storeToUpdate}`);
+        // throw new Error(`No subscribers for store ${storeToUpdate}`);
       }
 
       e.preventDefault();

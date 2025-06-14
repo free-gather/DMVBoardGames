@@ -9,7 +9,7 @@ export const SEARCH_EVENT_HANDLER_CONFIG: EventHandlerThunkConfig = {
       day: params.componentStore.day,
     };
   },
-  storeToUpdate: SEARCH_REQUEST_STORE,
+  requestStoreToUpdate: SEARCH_REQUEST_STORE,
 };
 
 export const UPDATE_CITY_CONFIG: EventHandlerThunkConfig = {

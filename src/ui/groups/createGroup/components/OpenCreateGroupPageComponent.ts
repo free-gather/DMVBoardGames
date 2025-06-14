@@ -1,10 +1,11 @@
 import { BaseTemplateDynamicComponent } from "../../../../framework/components/BaseTemplateDynamicComponent.ts";
 import type { OpenCreateGroupPageState } from "../data/types/OpenCreateGroupPageState.ts";
+import { OPEN_CREATE_GROUP_PAGE_CONFIG } from "../OpenCreateGroupPageHandler.ts";
 
 const template = document.createElement("template");
 template.innerHTML = `
   <style>
-    .openGroupEditPageButton {
+    #openGroupEditPageButton {
       padding: 2rem;
     }
   </style>
@@ -33,7 +34,8 @@ export class OpenCreateGroupPageComponent extends BaseTemplateDynamicComponent {
 
   render(data: OpenCreateGroupPageState): string {
     return `
-      ${data.isVisible ? `<button>Create group </button>` : ""} 
+      ${data.isVisible ? `<button id ="openGroupEditPageButton" ${this.createClickEvent(OPEN_CREATE_GROUP_PAGE_CONFIG)}>Create group </button>` : ""} 
+     
     `;
   }
 }

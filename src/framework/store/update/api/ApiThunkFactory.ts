@@ -19,6 +19,7 @@ export function generateApiThunk(config: ApiThunkConfig) {
 
   const apiThunk = new BaseThunk(getAction);
   if (config.requestStoreName) {
+    console.log(`Subscribing to request store ${config.requestStoreName}`);
     subscribeToRequestStore(config.requestStoreName, apiThunk);
   }
   return apiThunk;

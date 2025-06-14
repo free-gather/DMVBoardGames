@@ -85,7 +85,7 @@ export function updateRequestStore(
 
     if (item.dispatchers.length === 0) {
       throw new Error(
-        `No components are subscribed to request store: ${storeName}`,
+        `No dispatchers for the response associated with: ${storeName} Make sure a component is subscribed to the store thunk`,
       );
     }
 
