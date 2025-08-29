@@ -1,20 +1,16 @@
 import type { GameRestaurant } from "../data/types/GameRestaurant.ts";
 import { BaseTemplateDynamicComponent } from "@bponnaluri/places-js";
 import {generateLinkButton} from "../../../shared/components/ButtonGenerator.ts";
-import {GLOBAL_STATE_LOAD_CONFIG_KEY} from "@bponnaluri/places-js";
 import {LOCATIONS_THUNK} from "../data/search/LocationsThunk.ts";
 
 
-const loadConfig = {
-  [GLOBAL_STATE_LOAD_CONFIG_KEY]: {
-    dataThunks:[{
+const loadConfig = [{
       componentReducer: (data:any)=>{
         return data.gameRestaurants;
       },
       dataThunk: LOCATIONS_THUNK,
     }]
-  },
-};
+
 
 const template = `
   <link rel="stylesheet" type="text/css" href="/styles/sharedComponentStyles.css"/>

@@ -2,17 +2,13 @@ import type { GroupSearchResult } from "../../data/types/group/GroupSearchResult
 import {AbstractPageComponent, BaseTemplateDynamicComponent} from "@bponnaluri/places-js";
 import {generateButton} from "../../../../shared/components/ButtonGenerator.ts";
 import {getDisplayName} from "../../../../shared/DisplayNameConversion.ts";
-import {
-  GLOBAL_STATE_LOAD_CONFIG_KEY,
-} from "@bponnaluri/places-js";
+
 import {GROUP_SEARCH_THUNK} from "../../data/search/GroupSearchThunk.ts";
 import {DEFAULT_SEARCH_PARAMETER} from "../group-search/Constants.ts";
 import {searchResultReducer} from "../../data/store/SearchResultReducer.ts";
 import {GroupPageComponent} from "../../../groups/viewGroup/components/GroupPageComponent.ts";
 
-const loadConfig = {
-  [GLOBAL_STATE_LOAD_CONFIG_KEY]: {
-    dataThunks:[{
+const loadConfig = [{
       componentReducer: searchResultReducer,
       dataThunk: GROUP_SEARCH_THUNK,
       /*When updating component state, values for top level keys that do not have corresponding key value pairs
@@ -25,8 +21,6 @@ const loadConfig = {
         day: DEFAULT_SEARCH_PARAMETER
       }
     }]
-  },
-};
 
 
 const template = `

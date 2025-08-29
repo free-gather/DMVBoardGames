@@ -11,22 +11,17 @@ import {
   START_DATE_INPUT,
   START_TIME_INPUT
 } from "../../Constants.ts";
-import {PageState} from "@bponnaluri/places-js";
 import {generateButton} from "../../../../shared/components/ButtonGenerator.ts";
 import {generateErrorMessage} from "@bponnaluri/places-js";
 import {
   COMPONENT_LABEL_KEY,
-  IS_LOGGED_IN_KEY,
   SUCCESS_MESSAGE_KEY
 } from "../../../../shared/Constants.ts";
-import {
-  DEFAULT_GLOBAL_STATE_REDUCER_KEY,
-  GLOBAL_FIELD_SUBSCRIPTIONS_KEY,
-  GLOBAL_STATE_LOAD_CONFIG_KEY,
-} from "@bponnaluri/places-js";
+
 import {GroupPageComponent} from "../../viewGroup/components/GroupPageComponent.ts";
 import {getEventDetailsFromForm, validateEventFormData} from "../EventDetailsHandler.ts";
 import {API_ROOT} from "../../../../shared/Params.ts";
+import {LOGIN_THUNK} from "../../../auth/data/LoginThunk.ts";
 
 const templateStyle = `
   <link rel="stylesheet" type="text/css" href="/styles/sharedComponentStyles.css"/>
@@ -45,20 +40,17 @@ const templateStyle = `
   </style>
 `;
 
-const loadConfig = {
-  [GLOBAL_STATE_LOAD_CONFIG_KEY]: {
-    [GLOBAL_FIELD_SUBSCRIPTIONS_KEY]: [IS_LOGGED_IN_KEY],
-    [DEFAULT_GLOBAL_STATE_REDUCER_KEY]:  (updates: Record<string, string>) => {
-      PageState.pageLoaded = true;
-      return {
-        name: "",
-        description: "",
-        url: "",
-        isVisible: updates[IS_LOGGED_IN_KEY],
-      };
-    },
-  },
-};
+const loadConfig =  [{
+      componentReducer:(data:any)=>{
+        return {
+          name: "",
+          description: "",
+          url: "",
+          isVisible: data["loggedIn"],
+        };
+      },
+      dataThunk: LOGIN_THUNK
+    }];
 
 const CREATE_EVENT_BUTTON_ID = "create-event-button";
 const BACK_TO_GROUP_ID = "back-to-group";
@@ -69,9 +61,7 @@ export class CreateEventComponent extends BaseTemplateDynamicComponent {
   }
 
   connectedCallback(){
-    if(PageState.pageLoaded) {
-      this.retrieveData({isVisible: true})
-    }
+    this.updateData({isVisible: true})
   }
 
   override attachEventsToShadowRoot(shadowRoot?: any) {
@@ -89,7 +79,7 @@ export class CreateEventComponent extends BaseTemplateDynamicComponent {
           const validationErrors:any = validateEventFormData(self);
 
           if(validationErrors.errorMessage.length !==0){
-            self.retrieveData(validationErrors);
+            self.updateData(validationErrors);
           } else {
             const eventDetails = getEventDetailsFromForm(self)
             InternalApiAction.getResponseData({
@@ -98,11 +88,11 @@ export class CreateEventComponent extends BaseTemplateDynamicComponent {
               url: API_ROOT + `/groups/${eventDetails.groupId}/events/`,
             }).then((response:any)=>{
               if(!response.errorMessage){
-                self.retrieveData({
+                self.updateData({
                   [SUCCESS_MESSAGE_KEY]: "Successfully created event"
                 });
               }else {
-                self.retrieveData(response)
+                self.updateData(response)
               }
             })
           }
@@ -133,7 +123,7 @@ export class CreateEventComponent extends BaseTemplateDynamicComponent {
           id: EVENT_NAME_INPUT,
           [COMPONENT_LABEL_KEY]: "Event name",
           inputType: "text",
-          value: data.name
+          value: data.name ?? ""
         })}
         <br>
         
@@ -141,7 +131,7 @@ export class CreateEventComponent extends BaseTemplateDynamicComponent {
           id: EVENT_DESCRIPTION_INPUT,
           [COMPONENT_LABEL_KEY]: "Event description",
           inputType: "text",
-          value: data.description
+          value: data.description ?? ""
         })}
         <br>
         
@@ -149,7 +139,7 @@ export class CreateEventComponent extends BaseTemplateDynamicComponent {
           id: EVENT_URL_INPUT,
           [COMPONENT_LABEL_KEY]: "Event URL",
           inputType: "text",
-          value: data.url
+          value: data.url ?? ""
         })}
         <br>
          

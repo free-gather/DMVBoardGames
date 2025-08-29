@@ -59,7 +59,7 @@ async function retrieveData(
       const authTokenData = await data.json();
       addLocalStorageData(AUTH_TOKEN_KEY, JSON.stringify(authTokenData))
 
-      return new AuthResponse(true, authTokenData);
+      return new AuthResponse(true, {...authTokenData,username:authData?.username});
     }
     const error = await data.json();
     if (backupResponse.defaultFunction) {
@@ -81,7 +81,6 @@ async function retrieveData(
 export function getLoginComponentStoreFromLoginResponse(
   response: any,
 ) {
-
   return {
     [IS_LOGGED_IN_KEY]: response.loggedIn,
     errorMessage: response.error,

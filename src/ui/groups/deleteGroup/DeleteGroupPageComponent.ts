@@ -5,15 +5,11 @@ import {generateButton} from "../../../shared/components/ButtonGenerator.ts";
 import {generateErrorMessage} from "@bponnaluri/places-js";
 import {
   COMPONENT_LABEL_KEY,
-  IS_LOGGED_IN_KEY,
   SUCCESS_MESSAGE_KEY
 } from "../../../shared/Constants.ts";
-import {
-  DEFAULT_GLOBAL_STATE_REDUCER_KEY,
-  GLOBAL_FIELD_SUBSCRIPTIONS_KEY,
-  GLOBAL_STATE_LOAD_CONFIG_KEY,
-} from "@bponnaluri/places-js";
+
 import {API_ROOT} from "../../../shared/Params.ts";
+import {LOGIN_THUNK} from "../../auth/data/LoginThunk.ts";
 
 const template = `
   <link rel="stylesheet" type="text/css" href="/styles/sharedComponentStyles.css"/>
@@ -28,20 +24,9 @@ const template = `
   </style>
 `;
 
-const loadConfig = {
-  [GLOBAL_STATE_LOAD_CONFIG_KEY]: {
-    [GLOBAL_FIELD_SUBSCRIPTIONS_KEY]: [IS_LOGGED_IN_KEY],
-    [DEFAULT_GLOBAL_STATE_REDUCER_KEY]: (updates: Record<string, string>) => {
-      return {
-        name: "",
-        description: "",
-        url: "",
-        isVisible: updates[IS_LOGGED_IN_KEY],
-        existingGroupName: getUrlParameter("name")
-      };
-    },
-  },
-};
+const loadConfig = [{
+      dataThunk: LOGIN_THUNK
+    }];
 
 
 const CONFIRM_DELETE_BUTTON_ID = "confirm-delete-button";
@@ -73,7 +58,7 @@ export class DeleteGroupPageComponent extends BaseTemplateDynamicComponent {
   }
 
   connectedCallback(){
-    this.retrieveData({isVisible: true, existingGroupName: getUrlParameter("name")})
+    this.updateData({isVisible: true, existingGroupName: getUrlParameter("name")})
   }
 
   override attachEventHandlersToDom(shadowRoot?: any) {
@@ -81,7 +66,7 @@ export class DeleteGroupPageComponent extends BaseTemplateDynamicComponent {
     shadowRoot?.getElementById(CONFIRM_DELETE_BUTTON_ID).addEventListener("click",()=>{
       const formInputs:any = self.retrieveAndValidateFormInputs();
       if(formInputs.errorMessage){
-        self.retrieveData(formInputs);
+        self.updateData(formInputs);
       } else {
 
         const params = {
@@ -91,12 +76,12 @@ export class DeleteGroupPageComponent extends BaseTemplateDynamicComponent {
 
         InternalApiAction.getResponseData(params).then((response:any)=>{
           if (response.errorMessage) {
-            self.retrieveData({
+            self.updateData({
               errorMessage: response.errorMessage,
               [SUCCESS_MESSAGE_KEY]: "",
             });
           } else {
-            self.retrieveData({
+            self.updateData({
               errorMessage: "",
               [SUCCESS_MESSAGE_KEY]: "Successfully deleted group",
             });

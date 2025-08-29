@@ -13,23 +13,17 @@ import { BaseTemplateDynamicComponent } from "@bponnaluri/places-js";
 import {generateButton} from "../../../../shared/components/ButtonGenerator.ts";
 import type {DropdownConfig} from "@bponnaluri/places-js";
 import {getDisplayName} from "../../../../shared/DisplayNameConversion.ts";
-import {
-   GLOBAL_STATE_LOAD_CONFIG_KEY,
-} from "@bponnaluri/places-js";
+
 import {
   DEFAULT_PARAMETER_DISPLAY_KEY,
   DEFAULT_PARAMETER_KEY,
 } from "../../../../shared/Constants.ts";
 import {GROUP_SEARCH_THUNK} from "../../data/search/GroupSearchThunk.ts";
-const loadConfig = {
-  [GLOBAL_STATE_LOAD_CONFIG_KEY]: {
-    dataThunks: [{
+const loadConfig = [{
       componentReducer: updateCities,
       dataThunk:CITY_LIST_THUNK,
       fieldName: "cityList"
-    }]
-  }
-};
+    }];
 
 const template = `
   <link rel="stylesheet" type="text/css" href="/styles/sharedComponentStyles.css"/>
@@ -126,15 +120,15 @@ export class GroupSearchComponent extends BaseTemplateDynamicComponent {
     shadowRoot?.getElementById(SEARCH_FORM_ID)?.addEventListener("change", (event:any)=>{
       const eventTarget = event.originalTarget.id;
       if(eventTarget === SEARCH_DAYS_ID){
-        self.retrieveData({
+        self.updateData({
           day: (event.originalTarget as HTMLInputElement).value,
         })
       } else if(eventTarget === SEARCH_CITY_ID){
-        self.retrieveData({
+        self.updateData({
           location: (event.originalTarget  as HTMLInputElement).value,
         })
       } else if(eventTarget === SEARCH_DISTANCE_ID) {
-        self.retrieveData({
+        self.updateData({
           distance: (event.originalTarget as HTMLInputElement).value
         })
       }

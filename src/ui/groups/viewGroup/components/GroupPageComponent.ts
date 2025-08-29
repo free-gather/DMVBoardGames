@@ -19,9 +19,6 @@ import {
   COMPONENT_LABEL_KEY,
   SUCCESS_MESSAGE_KEY
 } from "../../../../shared/Constants.ts";
-import {
-  GLOBAL_STATE_LOAD_CONFIG_KEY,
-} from "@bponnaluri/places-js";
 import {CreateEventComponent} from "../../events/components/CreateEventComponent.ts";
 import {DeleteGroupPageComponent} from "../../deleteGroup/DeleteGroupPageComponent.ts";
 import {InternalApiAction} from "@bponnaluri/places-js";
@@ -108,16 +105,11 @@ const groupDataReducer = (groupData:any)=>{
   return {...groupData, [SUCCESS_MESSAGE_KEY]:''}
 }
 
-const loadConfig = {
-  [GLOBAL_STATE_LOAD_CONFIG_KEY]: {
-    dataThunks:[{
+const loadConfig = [{
       dataThunk:GROUP_REQUEST_THUNK,
       componentReducer:groupDataReducer,
       urlParams:["name"]
     }]
-  },
-
-};
 
 const ADD_EVENT_BUTTON_ID = "add-event";
 const CANCEL_UPDATES_BUTTON_ID = "cancel-updates";
@@ -142,7 +134,7 @@ export class GroupPageComponent extends BaseTemplateDynamicComponent {
       try {
         const targetId = event.originalTarget?.id;
         if(targetId === EDIT_GROUP_BUTTON_ID) {
-          self.retrieveData({
+          self.updateData({
             isEditing: true,
           })
         }
@@ -151,7 +143,6 @@ export class GroupPageComponent extends BaseTemplateDynamicComponent {
             id: self.componentState.id,
             name:self.componentState.name,
           }
-          console.log("Adding event");
           AbstractPageComponent.updateRoute(CreateEventComponent, params)
         }
         if(targetId === DELETE_GROUP_BUTTON_ID){
@@ -162,7 +153,7 @@ export class GroupPageComponent extends BaseTemplateDynamicComponent {
           AbstractPageComponent.updateRoute(DeleteGroupPageComponent,params)
         }
         if(targetId === CANCEL_UPDATES_BUTTON_ID) {
-          self.retrieveData({
+          self.updateData({
             isEditing: false
           })
         }
@@ -180,7 +171,7 @@ export class GroupPageComponent extends BaseTemplateDynamicComponent {
             url: API_ROOT + `/groups/?name=${encodeURIComponent(params.name)}`,
           }).then(()=>{
 
-            self.retrieveData({
+            self.updateData({
               isEditing: false,
               [SUCCESS_MESSAGE_KEY]: 'Group update successful'
             });

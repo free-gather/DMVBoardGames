@@ -29,9 +29,7 @@ import {
   COMPONENT_LABEL_KEY,
   SUCCESS_MESSAGE_KEY
 } from "../../../../shared/Constants.ts";
-import {
-  GLOBAL_STATE_LOAD_CONFIG_KEY,
-} from "@bponnaluri/places-js";
+
 import {GroupPageComponent} from "../../viewGroup/components/GroupPageComponent.ts";
 import {API_ROOT} from "../../../../shared/Params.ts";
 
@@ -58,13 +56,10 @@ const template = `
   </style>
 `;
 
-const loadConfig = {
-  [GLOBAL_STATE_LOAD_CONFIG_KEY]: {
-    dataThunks: [{
+const loadConfig =  [{
       dataThunk: GROUP_EVENT_REQUEST_THUNK
     }]
-  }
-}
+
 
 const BACK_TO_GROUP_BUTTON_ID = "back-to-group-button";
 const CONFIRM_DELETE_BUTTON_ID = "confirm-delete-button";
@@ -95,13 +90,13 @@ export class EventDetailsComponent extends BaseTemplateDynamicComponent {
           )
         }
         if(event.originalTarget.id === DELETE_EVENT_BUTTON_ID) {
-          self.retrieveData({
+          self.updateData({
             isDeleting: true,
             [SUCCESS_MESSAGE_KEY]:''
           })
         }
         if(event.originalTarget.id === CANCEL_DELETE_BUTTON_ID){
-          self.retrieveData({
+          self.updateData({
             errorMessage: '',
             isDeleting: false,
             [SUCCESS_MESSAGE_KEY]:''
@@ -119,12 +114,12 @@ export class EventDetailsComponent extends BaseTemplateDynamicComponent {
             url: `${API_ROOT}/groups/${params.groupId}/events/${encodeURIComponent(params.id)}/`,
           }).then((response:any)=>{
             if (response.errorMessage) {
-              self.retrieveData({
+              self.updateData({
                 errorMessage: response.errorMessage,
                 [SUCCESS_MESSAGE_KEY]: "",
               });
             } else {
-              self.retrieveData({
+              self.updateData({
                 isEditing: false,
                 errorMessage: "",
                 [SUCCESS_MESSAGE_KEY]: "Successfully deleted event"
@@ -134,7 +129,7 @@ export class EventDetailsComponent extends BaseTemplateDynamicComponent {
         }
 
         if(event.originalTarget.id === EDIT_EVENT_BUTTON_ID){
-          self.retrieveData({
+          self.updateData({
             isEditing: true,
             [SUCCESS_MESSAGE_KEY]:''
           })
@@ -144,7 +139,7 @@ export class EventDetailsComponent extends BaseTemplateDynamicComponent {
           const validationErrors:any = validateEventFormData(self);
 
           if(validationErrors.errorMessage.length !==0){
-            self.retrieveData(validationErrors);
+            self.updateData(validationErrors);
           } else {
             const eventDetails = getEventDetailsFromForm(self)
             InternalApiAction.getResponseData({
@@ -153,13 +148,13 @@ export class EventDetailsComponent extends BaseTemplateDynamicComponent {
               url: API_ROOT + `/groups/${eventDetails.groupId}/events/?id=${encodeURIComponent(eventDetails.id)}`,
             }).then((response:any)=>{
               if(!response.errorMessage){
-                self.retrieveData({
+                self.updateData({
                   isEditing: false,
                   errorMessage: "",
                   [SUCCESS_MESSAGE_KEY]: "Successfully updated event",
                 });
               } else {
-                self.retrieveData({
+                self.updateData({
                   errorMessage: response.errorMessage,
                   [SUCCESS_MESSAGE_KEY]: ""
                 })

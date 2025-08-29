@@ -10,8 +10,4 @@ function getLocationsQueryConfig() {
 
 export const LOCATIONS_THUNK = generateApiThunk({
   queryConfig: getLocationsQueryConfig,
-}).addGlobalStateReducer((data:any)=>{
-  return {
-    "gameLocations": data
-  };
 })

@@ -2,16 +2,13 @@ import {generateButton} from "../../../shared/components/ButtonGenerator.ts";
 import {IS_LOGGED_IN_KEY} from "../../../shared/Constants.ts";
 import {
   AbstractPageComponent,
-  GLOBAL_STATE_LOAD_CONFIG_KEY
 } from "@bponnaluri/places-js";
 import {BaseDynamicComponent} from "@bponnaluri/places-js";
 import {LOGIN_THUNK} from "../../auth/data/LoginThunk.ts";
 import {CreateGroupPageComponent} from "../../groups/createGroup/components/CreateGroupPageComponent.ts";
 
 
-const loadConfig = {
-  [GLOBAL_STATE_LOAD_CONFIG_KEY]: {
-    dataThunks:[{
+const loadConfig = [{
       componentReducer:(data:any)=>{
         return {
           [IS_LOGGED_IN_KEY]: data?.loggedIn
@@ -19,8 +16,7 @@ const loadConfig = {
       },
       dataThunk:LOGIN_THUNK
     }]
-  },
-}
+
 
 const CREATE_GROUP_BUTTON_ID = "open-create-group-page-button-id"
 export class OpenCreateGroupPageComponent extends BaseDynamicComponent {

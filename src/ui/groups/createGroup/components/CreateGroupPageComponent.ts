@@ -6,16 +6,12 @@ import {
 import {generateButton} from "../../../../shared/components/ButtonGenerator.ts";
 import {ApiActionTypes, generateErrorMessage, InternalApiAction} from "@bponnaluri/places-js";
 import {
-  COMPONENT_LABEL_KEY,
   IS_LOGGED_IN_KEY,
   SUCCESS_MESSAGE_KEY
 } from "../../../../shared/Constants.ts";
-import {
-  GLOBAL_STATE_LOAD_CONFIG_KEY,
-} from "@bponnaluri/places-js";
 import {BaseTemplateDynamicComponent} from "@bponnaluri/places-js";
 import {LOGIN_THUNK} from "../../../auth/data/LoginThunk.ts";
-import {API_ROOT} from "../../../../shared/Params.ts";
+import { API_ROOT } from "../../../../shared/Params.ts";
 
 const templateStyle = `
   <link rel="stylesheet" type="text/css" href="/styles/sharedComponentStyles.css"/>
@@ -24,6 +20,7 @@ const templateStyle = `
     #group-description-input {
       height:500px;
       width: 800px;
+      margin-bottom: 1rem;
     }
     #create-group-page-container {
       padding-left: 1rem;
@@ -31,10 +28,7 @@ const templateStyle = `
   </style>
 `;
 
-const loadConfig = {
-
-  [GLOBAL_STATE_LOAD_CONFIG_KEY]: {
-    dataThunks:[{
+const loadConfig = [{
       componentReducer:(data:any)=>{
         return {
           name: "",
@@ -44,10 +38,7 @@ const loadConfig = {
         }
       },
       dataThunk:LOGIN_THUNK
-    }]
-
-  },
-};
+    }];
 
 const CREATE_GROUP_BUTTON_ID = "create-group-button-id";
 
@@ -60,45 +51,46 @@ export class CreateGroupPageComponent extends BaseTemplateDynamicComponent {
     return templateStyle;
   }
 
-  connectedCallback(){
+  override attachEventsToShadowRoot(shadowRoot:ShadowRoot){
 
-    const self = this;
-    this.addEventListener("click", (event:any)=>{
-      event.preventDefault();
+    var self = this;
+    shadowRoot?.getElementById('create-group-form')?.addEventListener('submit',(event:any)=>{
+       event.preventDefault();
 
-      try {
-        if(event.originalTarget.id === CREATE_GROUP_BUTTON_ID) {
-          const params = {
-            id: self.componentState.id,
-            name: self.getFormValue(GROUP_NAME_INPUT),
-            description: self.getFormValue(GROUP_DESCRIPTION_INPUT),
-            url: self.getFormValue(GROUP_URL_INPUT)
-          }
 
-          InternalApiAction.getResponseData({
-            body: JSON.stringify(params),
-            method: ApiActionTypes.POST,
-            url: API_ROOT + `/groups/`,
-          }).then((data:any)=>{
-            if (data.errorMessage) {
-              self.retrieveData({
-                errorMessage: data.errorMessage,
-                [SUCCESS_MESSAGE_KEY]: "",
-              });
-            } else {
-              self.retrieveData({
-                errorMessage: "",
-                [SUCCESS_MESSAGE_KEY]: "Successfully created group",
-              });
-            }
-          })
+       const data = event.target.elements;
+
+       const params = {
+         id: self.componentState.id,
+         name: data[0].value,
+         description: data[1].value,
+         url: data[2].value
+       }
+
+      InternalApiAction.getResponseData({
+        body: JSON.stringify(params),
+        method: ApiActionTypes.POST,
+        url: API_ROOT + `/groups/`,
+      }).then((data:any)=>{
+
+        console.log(data)
+        console.log(Object.keys(data))
+        if (data.errorMessage) {
+          console.log("error")
+          console.log(data.errorMessage)
+          self.updateData({
+            errorMessage: data.errorMessage,
+            [SUCCESS_MESSAGE_KEY]: "",
+          });
+        } else {
+          console.log("No error")
+          self.updateData({
+            errorMessage: "",
+            [SUCCESS_MESSAGE_KEY]: "Successfully created group",
+          });
         }
-      } catch(e:any){
-        if(e.message !== `Permission denied to access property "id"`){
-          throw e;
-        }
-      }
-    });
+      })
+     })
   }
 
   render(createGroupData: any): string {
@@ -110,35 +102,39 @@ export class CreateGroupPageComponent extends BaseTemplateDynamicComponent {
           ${
             createGroupData.isLoggedIn
               ? `
-                <form onsubmit="return false">
+                <form id="create-group-form">
                 
-                 ${this.addShortInput({
-                  id: GROUP_NAME_INPUT,
-                  [COMPONENT_LABEL_KEY]: "Group Name",
-                  inputType: "text",
-                  value: createGroupData.name ?? ''
-                })}   
-                <br>
-                
-                ${this.addShortInput({
-                  id: GROUP_URL_INPUT,
-                  [COMPONENT_LABEL_KEY]: "Group URL",
-                  inputType: "text",
-                  value: createGroupData.url ?? ''
-                })}   
-                <br>
-                
-                ${this.addTextInput({
-                  id: GROUP_DESCRIPTION_INPUT,
-                  [COMPONENT_LABEL_KEY]: "Group Description",
-                  inputType: "text",
-                  value: createGroupData.description ?? ''
-                })}   
-                <br>
-                
+                  <label>Group name</label>
+                  <input
+                    name=${GROUP_NAME_INPUT}
+                    />${createGroupData.name}
+                  </input>
+                  
+                  <br>
+                  <label>Group url</label>
+                  <input
+                    name=${GROUP_URL_INPUT}
+                    />
+                  ${createGroupData.url}
+                  </input>
+                  
+             
+                  <br>
+                  <label>Group description</label>
+                  <br>
+                  <textarea
+                    id=${GROUP_DESCRIPTION_INPUT}
+                    name=${GROUP_DESCRIPTION_INPUT}
+                    />
+                  ${createGroupData.description}
+                  </textarea>
+                  <br>
+          
+      
                  ${generateButton({
                   component: this,
                   id: CREATE_GROUP_BUTTON_ID,
+                  type:"submit",
                   text: "Create group"
                 })}
              

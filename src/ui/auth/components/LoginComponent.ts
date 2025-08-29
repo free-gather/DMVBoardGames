@@ -11,7 +11,7 @@ import {
 } from "../../../shared/Constants.ts";
 import {
   BaseTemplateDynamicComponent,
-  GLOBAL_STATE_LOAD_CONFIG_KEY, InternalApiAction,
+  InternalApiAction,
 } from "@bponnaluri/places-js";
 import {generateButton} from "../../../shared/components/ButtonGenerator.ts";
 import {generateErrorMessage} from "@bponnaluri/places-js";
@@ -56,14 +56,11 @@ export class LoginComponent extends BaseTemplateDynamicComponent {
   hasRendered: boolean;
 
   constructor() {
-    super({
-      [GLOBAL_STATE_LOAD_CONFIG_KEY]: {
-        dataThunks: [{
+    super([{
           componentReducer: getLoginComponentStoreFromLoginResponse,
           dataThunk: LOGIN_THUNK,
-        }],
-      }
-    });
+        }]
+      );
     this.hasRendered = false;
   }
 
@@ -95,7 +92,7 @@ export class LoginComponent extends BaseTemplateDynamicComponent {
 
           const formInputs = self.retrieveAndValidateFormInputs()
           if(formInputs.errorMessage){
-            self.retrieveData(formInputs)
+            self.updateData(formInputs)
           } else {
             LOGIN_THUNK.getData({
               username: self.getFormValue(USERNAME_INPUT),
@@ -107,7 +104,7 @@ export class LoginComponent extends BaseTemplateDynamicComponent {
         if (targetId === REGISTER_BUTTON_ID) {
           const formInputs = self.retrieveAndValidateFormInputs()
           if(formInputs.errorMessage){
-            self.retrieveData(formInputs)
+            self.updateData(formInputs)
           } else {
 
             InternalApiAction.getResponseData({
@@ -118,11 +115,11 @@ export class LoginComponent extends BaseTemplateDynamicComponent {
 
               console.log(response)
               if(response.errorMessage){
-                self.retrieveData({
+                self.updateData({
                   "errorMessage":response.errorMessage
                 })
               } else {
-                self.retrieveData({
+                self.updateData({
                   [SUCCESS_MESSAGE_KEY]: "Successfully registered user"
                 })
               }

@@ -1,17 +1,13 @@
 import {
   BaseTemplateDynamicComponent,
-  GLOBAL_STATE_LOAD_CONFIG_KEY
 } from "@bponnaluri/places-js";
 import {LOGIN_THUNK} from "../../ui/auth/data/LoginThunk.ts";
 import {LOGOUT_THUNK} from "../../ui/auth/data/LogoutThunk.ts";
 
-const loadConfig = {
-  [GLOBAL_STATE_LOAD_CONFIG_KEY]: {
-    dataThunks:[{
+const loadConfig = [{
       dataThunk: LOGIN_THUNK
     }]
-  },
-}
+
 
 const template = `
    
@@ -71,7 +67,6 @@ export class LoginStatusComponent extends BaseTemplateDynamicComponent {
   }
 
   override render(data:any){
-
     if(data.loggedIn){
       return `
         <span>Welcome ${data?.username}</span>

@@ -33,7 +33,7 @@ export class HomepageComponent extends BaseDynamicComponent {
   }
 
   connectedCallback() {
-    this.retrieveData({
+    this.updateData({
       hideEvents: false,
       hideConventions: true,
       hideRestaurants: true,
@@ -53,7 +53,7 @@ export class HomepageComponent extends BaseDynamicComponent {
       }
       else {
         if ([CONVENTIONS_ID, EVENT_SEARCH_ID, GAME_RESTAURANTS_ID, GAME_STORES_ID].includes(targetId)) {
-          self.retrieveData({
+          self.updateData({
             hideEvents: targetId !== EVENT_SEARCH_ID,
             hideConventions: targetId !== CONVENTIONS_ID,
             hideRestaurants: targetId !== GAME_RESTAURANTS_ID,
